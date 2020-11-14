@@ -41,13 +41,13 @@ Use [go-autumn-logging](https://github.com/StephanHCB/go-autumn-logging)!
 
 ### Application Authors
 
-You're all set with this dependency, just make sure you call one of the provided `Initialize` functions
+You're all set with this dependency, just make sure you call one of the provided `Setup` functions
 to set up either JSON or plaintext logging.
 
 TODO: typical example
 
 If you don't like our choice of fields or styling, you can easily customize everything by providing your own 
-Initialize-style function to call instead.
+Setup-style function to call instead.
 
 ### How To Use
 
