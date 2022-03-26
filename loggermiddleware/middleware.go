@@ -10,7 +10,7 @@ var RequestIdFieldName = "request-id"
 var MethodFieldName = "method"
 var PathFieldName = "path"
 
-// middleware to add context aware logger to your context
+// AddZerologLoggerToContext is a middleware to add a context aware logger to your context.
 //
 // also support logging request ids, just assign RequestIdFromContextRetriever before using this
 func AddZerologLoggerToContext(next http.Handler) http.Handler {

@@ -37,14 +37,22 @@ Implementation that pulls in logging using [zerolog](https://github.com/rs/zerol
 Do NOT import this. You are doing it WRONG. You'll take away the application author's choice of 
 logging libraries, which is the whole point of using go-autumn-logging in the first place.
 
-Use [go-autumn-logging](https://github.com/StephanHCB/go-autumn-logging)!
+Use [go-autumn-logging](https://github.com/StephanHCB/go-autumn-logging) (the api module) only!
 
 ### Application Authors
 
 You're all set with this dependency, just make sure you call one of the provided `Setup` functions
-to set up either JSON or plaintext logging.
+to set up either JSON or plaintext logging. The simplest example for JSON logging
 
-TODO: typical example
+```
+auzerolog.SetupJsonLogging("application-name")
+```
+
+and for plaintext logging:
+
+```
+auzerolog.SetupPlaintextLogging()
+```
 
 If you don't like our choice of fields or styling, you can easily customize everything by providing your own 
 Setup-style function to call instead.

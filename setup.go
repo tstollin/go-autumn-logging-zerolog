@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-// configure to implement a subset of ECS
+// SetupJsonLogging configures go-autumn-logging to log via rs/zerolog using a subset of ECS
 // see https://www.elastic.co/guide/en/ecs/1.4
 func SetupJsonLogging(serviceId string) {
 	zerolog.TimestampFieldName = "@timestamp"
@@ -18,20 +18,24 @@ func SetupJsonLogging(serviceId string) {
 		Timestamp().
 		Str("service.id", serviceId).
 		Logger()
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMicro
 }
 
-// configure to implement a simple plaintext logger
+// SetupPlaintextLogging configures go-autumn-logging to log via rs/zerolog using a simple plaintext logger
 func SetupPlaintextLogging() {
-		log.Logger = log.Output(zerolog.ConsoleWriter{
-			Out: os.Stdout,
-			NoColor: true,
-			TimeFormat: "15:04:05.000",
-			PartsOrder: []string{
-				zerolog.TimestampFieldName,
-				zerolog.LevelFieldName,
-				zerolog.MessageFieldName,
-			},
-		})
+	log.Logger = log.Output(zerolog.ConsoleWriter{
+		Out:        os.Stdout,
+		NoColor:    true,
+		TimeFormat: "15:04:05.000",
+		PartsOrder: []string{
+			zerolog.TimestampFieldName,
+			zerolog.LevelFieldName,
+			zerolog.MessageFieldName,
+		},
+	})
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMicro
 }
 
 var RecordedLogForTesting = new(bytes.Buffer)
