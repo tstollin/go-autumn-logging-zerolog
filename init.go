@@ -1,4 +1,4 @@
-package go_autumn_logging_zerolog
+package auzerolog
 
 import (
 	aulogging "github.com/StephanHCB/go-autumn-logging"

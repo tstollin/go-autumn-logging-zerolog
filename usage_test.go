@@ -1,4 +1,4 @@
-package go_autumn_logging_zerolog
+package auzerolog
 
 import (
 	"context"
@@ -12,7 +12,7 @@ func TestPlaintextLogging(t *testing.T) {
 
 	ctx := AddLoggerToCtx(context.Background())
 	err := errors.New("some wonderful error")
-	
+
 	aulogging.Logger.NoCtx().Error().Print("no context print error severity, no error object")
 	aulogging.Logger.Ctx(ctx).Error().WithErr(err).Print("with context print error severity, with error object")
 
