@@ -10,9 +10,15 @@ import (
 type ZerologLoggingImplementation struct{}
 
 func (l *ZerologLoggingImplementation) Ctx(ctx context.Context) auloggingapi.ContextAwareLoggingImplementation {
-	return &contextawarelogging.ZerologContextAwareLoggingImplementation{LoggerWithCtx: log.Ctx(ctx)}
+	return &contextawarelogging.ZerologContextAwareLoggingImplementation{
+		LoggerWithCtx: log.Ctx(ctx),
+		Ctx:           ctx,
+	}
 }
 
 func (l *ZerologLoggingImplementation) NoCtx() auloggingapi.ContextAwareLoggingImplementation {
-	return &contextawarelogging.ZerologContextAwareLoggingImplementation{LoggerWithCtx: &log.Logger}
+	return &contextawarelogging.ZerologContextAwareLoggingImplementation{
+		LoggerWithCtx: &log.Logger,
+		Ctx:           context.Background(),
+	}
 }
