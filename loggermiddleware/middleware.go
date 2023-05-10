@@ -11,6 +11,13 @@ var RequestIdFieldName = "request-id"
 var MethodFieldName = "method"
 var PathFieldName = "path"
 
+var customJsonLogFields = make([]customJsonLogField, 0)
+
+type customJsonLogField struct {
+	LogFieldName   string
+	ValueExtractor func(r *http.Request) string
+}
+
 // AddZerologLoggerToContext is a middleware to add a context aware logger to your context.
 //
 // also supports logging request ids, just assign RequestIdFromContextRetriever before using this
@@ -26,6 +33,11 @@ func AddZerologLoggerToContext(next http.Handler) http.Handler {
 			builder = builder.
 				Str(MethodFieldName, method).
 				Str(PathFieldName, path)
+
+			for _, customField := range customJsonLogFields {
+				value := customField.ValueExtractor(r)
+				builder = builder.Str(customField.LogFieldName, value)
+			}
 		}
 		if aulogging.RequestIdRetriever != nil {
 			requestId := aulogging.RequestIdRetriever(ctx)
@@ -37,4 +49,16 @@ func AddZerologLoggerToContext(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(newCtx))
 	}
 	return http.HandlerFunc(fn)
+}
+
+// AddCustomJsonLogField is a function to add custom fields to json logs.
+//
+// The first parameter determines the name of the field. The second parameters is used to determine the value of the
+// field from the logged request.
+// Each invocation adds one extra field.
+func AddCustomJsonLogField(logFieldName string, valueExtractor func(r *http.Request) string) {
+	customJsonLogFields = append(customJsonLogFields, customJsonLogField{
+		LogFieldName:   logFieldName,
+		ValueExtractor: valueExtractor,
+	})
 }
