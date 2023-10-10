@@ -5,6 +5,7 @@ import (
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"github.com/rs/zerolog/log"
 	"net/http"
+	"regexp"
 )
 
 var RequestIdFieldName = "request-id"
@@ -16,8 +17,14 @@ type CustomJsonLogField struct {
 	ValueExtractor func(r *http.Request) string
 }
 
+type RequestLogExclusionRule struct {
+	ExcludedPathsPattern   *regexp.Regexp
+	ExcludedMethodsPattern *regexp.Regexp
+}
+
 type AddZerologLoggerToContextOptions struct {
-	CustomJsonLogFields []CustomJsonLogField
+	CustomJsonLogFields  []CustomJsonLogField
+	RequestLogExclusions []RequestLogExclusionRule
 }
 
 // AddZerologLoggerToContextMiddleware constructs a middleware with the given options.
@@ -31,6 +38,18 @@ func AddZerologLoggerToContextMiddleware(options AddZerologLoggerToContextOption
 
 			method := r.Method
 			path := r.URL.Path
+
+			for _, exclusions := range options.RequestLogExclusions {
+				if exclusions.ExcludedMethodsPattern == nil && exclusions.ExcludedPathsPattern == nil {
+					// empty rule -> skip to next rule
+					continue
+				}
+				if (exclusions.ExcludedPathsPattern == nil || exclusions.ExcludedPathsPattern.MatchString(path)) &&
+					(exclusions.ExcludedMethodsPattern == nil || exclusions.ExcludedMethodsPattern.MatchString(method)) {
+					next.ServeHTTP(w, r.WithContext(ctx))
+					return
+				}
+			}
 
 			builder := log.Logger.With()
 			if auzerolog.IsJson {
